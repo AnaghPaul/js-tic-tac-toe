@@ -34,7 +34,7 @@ function willPlayer2Play() {
 function doesPlayerWantCross() {
   // console.clear();
   console.log();
-  return confirm('Do you want ' + CROSS + ' as your mark ?');
+  return confirm(player1Name + ' do you want ' + CROSS + ' as your mark ?');
 }
 
 function printLine1() {
@@ -293,10 +293,15 @@ function ticTacToe() {
     while (((!isPlayer2InputValid || !didPlayer2UpdateGrid) && !hasGameEnded()) && counter++ < 40) {
       // console.log('Computer input not valid');
 
-      player2Input = takeComputerInput(PLAYER2MARK);
+      if (ISCOMPUTERPLAYING) {
+        player2Input = takeComputerInput(PLAYER2MARK);
 
-      console.log('player2Input', player2Input);
-      console.log('counter', counter);
+      } else {
+        player2Input = takePlayerInput(player2Name, PLAYER2MARK);
+      }
+
+      // console.log('player2Input', player2Input);
+      // console.log('counter', counter);
       
       isPlayer2InputValid = isInputValid(player2Input);
 
