@@ -6,15 +6,18 @@ const CIRCLE = '⭕';
 
 const ISCOMPUTERPLAYING = !willPlayer2Play();
 
+let player1Points = 0;
+let player2Points = 0;
+
 let player1Name = prompt('Enter name of player 1:', 'Player 1');
 let player2Name = 'Computer';
 
 if (!ISCOMPUTERPLAYING) {
-  player2Name = prompt('Enter name of player 1:', 'Player 2');
+  player2Name = prompt('Enter name of player 2:', 'Player 2');
 }
 
-const PLAYER1MARK = doesPlayerWantCross() ? CROSS : CIRCLE;
-const PLAYER2MARK = PLAYER1MARK === CROSS ? CIRCLE : CROSS;
+let MARK1 = doesPlayerWantCross() ? CROSS : CIRCLE;
+let MARK2 = MARK1 === CROSS ? CIRCLE : CROSS;
 
 let a1 = ' 1';
 let a2 = ' 2';
@@ -27,32 +30,29 @@ let c2 = ' 8';
 let c3 = ' 9';
 
 function willPlayer2Play() {
+
   console.clear();
   return confirm('Player 1 vs Player 2 ?')
 }
 
 function doesPlayerWantCross() {
-  // console.clear();
   console.log();
   return confirm(player1Name + ' do you want ' + CROSS + ' as your mark ?');
 }
 
 function printLine1() {
-  // const line1 = ' 1 ' + a1 + LINE + b1 + LINE + c1;
   const line1 = '   ' + a1 + LINE + b1 + LINE + c1;
   
   console.log('\n' + line1);
 }
 
 function printLine2() {
-  // const line2 = ' 2 ' + a2 + LINE + b2 + LINE + c2;
   const line2 = '   ' + a2 + LINE + b2 + LINE + c2;
 
   console.log(line2);
 }
 
 function printLine3() {
-  // const line3 = ' 3 ' + a3 + LINE + b3 + LINE + c3;
   const line3 = '   ' + a3 + LINE + b3 + LINE + c3;
 
   console.log(line3);
@@ -66,27 +66,36 @@ function printHorizontalLine() {
   console.log('   ━━╋━━╋━━');
 }
 
+function printPointBoard() {
+  console.log('\n' + player1Name + ': ' + player1Points);
+  console.log('\n' + player2Name + ': ' + player2Points);
+  console.log('\n\n');
+}
+
 function updateScreen() {
   console.clear();    // ------comment this to see log-----------
 
-  // printHeading();
-  // printHorizontalLine();
-  
+  printPointBoard();
   printLine1();
   printHorizontalLine();
   printLine2();
   printHorizontalLine();
   printLine3();
-  // printHorizontalLine();
+}
 
-  // console.log('a1:', a1, 'a2:', a2, 'a3:', a3, 'b1:', b1, 'b2:', b2, 'b3:', b3, 'c1:', c1, 'c2:', c2, 'c3:', c3); 
-
+function resetGrid() {
+  a1 = ' 1';
+  a2 = ' 2';
+  a3 = ' 3';
+  b1 = ' 4';
+  b2 = ' 5';
+  b3 = ' 6';
+  c1 = ' 7';
+  c2 = ' 8';
+  c3 = ' 9';
 }
 
 function updateGrid(input, mark) {
-  // console.log('Got into updateGrid()');
-  // console.log('input is', input);
-
   switch (input) {
     case '1':
       if (a1 === ' 1') {
@@ -157,38 +166,26 @@ function takePlayerInput(name, mark) {
 function takeComputerInput() {
   const randomBoxNumber = Math.ceil(Math.random() * 9);
 
-  // const number = (randomBoxNumber % 3) + 1;
-
-  // let computerInput = '';
-  // let letter = Math.round(randomBoxNumber / 3);
-
-  // // console.log(letter + number);
-
-  // if (letter === 0) {
-  //   computerInput = 'A' + number;
-  // }
-
-  // if (letter === 1) {
-  //   computerInput = 'B' + number;
-  // }
-  // if (letter === 2) {
-  //   computerInput = 'C' + number;
-  // }
-  
-  // return computerInput;
   return randomBoxNumber + '';
 }
 
-function hasGameEnded() {
-  // const topAcross = (a1 === b1) && (a1 === c1) && (a1 !== '  ');
-  // const middleAcross = (a2 === b2) && (a2 === c2) && (a2 !== '  ');
-  // const bottomAcross = (a3 === b3) && (a3 === c3) && (a3 !== '  ');
-  // const leftDown = (a1 === a2) && (a1 === a3) && (a1 !== '  ');
-  // const middleDown = (b1 === b2) && (b1 === b3) && (b1 !== '  ');
-  // const rightDown = (c1 === c2) && (c1 === c3) && (c1 !== '  ');
-  // const leftDiagonal = (a1 === b2) && (a1 === c3) && (a1 !== '  ');
-  // const rightDiagonal = (a3 === b2) && (a3 === c1) && (a3 !== '  ');
+function areAnyBoxesLeft () {
+  if (a1 === ' 1' || a2 === ' 2' || a3 === ' 3') {
+    return true;
+  }
 
+  if (b1 === ' 4' || b2 === ' 5' || b3 === ' 6') {
+    return true;
+  }
+
+  if (c1 === ' 7' || c2 === ' 8' || c3 === ' 9') {
+    return true;
+  }
+
+  return false;
+}
+
+function hasGameEnded() {
   const topAcross = (a1 === b1) && (a1 === c1);
   const middleAcross = (a2 === b2) && (a2 === c2);
   const bottomAcross = (a3 === b3) && (a3 === c3);
@@ -197,10 +194,6 @@ function hasGameEnded() {
   const rightDown = (c1 === c2) && (c1 === c3);
   const leftDiagonal = (a1 === b2) && (a1 === c3);
   const rightDiagonal = (a3 === b2) && (a3 === c1);
-
-  // console.log(topAcross, middleAcross, bottomAcross);
-  // console.log(leftDown, middleDown, rightDown);
-  // console.log(leftDiagonal, rightDiagonal);
 
   if (topAcross || middleAcross || bottomAcross) {
     return true;
@@ -233,16 +226,15 @@ function isInputValid(input) {
   return false;
 }
 
-function ticTacToe() {
+function ticTacToe(player1Mark, player2Mark) {
   updateScreen();
 
-  let counter = 0;
+  // let counter = 0;
 
   let didPlayer1UpdateGrid = false;
   let didPlayer2UpdateGrid = false;
 
-  while (!hasGameEnded() && counter++ < 40) {
-    // console.log('Got into main while loop');
+  while (!hasGameEnded() && areAnyBoxesLeft()) {
     let isPlayer1InputValid = false;
     let isPlayer2InputValid = false;
 
@@ -252,87 +244,45 @@ function ticTacToe() {
     let player1Input = '';
     let player2Input = '';
     
-    while (((!isPlayer1InputValid  && !hasGameEnded()) || !didPlayer1UpdateGrid) && counter++ < 40) {
-      // console.log('Player input not valid');
-
-      player1Input = takePlayerInput(player1Name, PLAYER1MARK);
-
-      // console.log(playerInput);
+    while (((!isPlayer1InputValid || !didPlayer1UpdateGrid) && !hasGameEnded()) && areAnyBoxesLeft()) {
+      player1Input = takePlayerInput(player1Name, player1Mark);
 
       isPlayer1InputValid = isInputValid(player1Input);
 
-      didPlayer1UpdateGrid = updateGrid(player1Input, PLAYER1MARK);
-
-      // if (!didPlayer1UpdateGrid) {
-      //   console.log('\nYou cannot put', PLAYER1MARK, 'at', player1Input);
-      // }
-
-      // if (isPlayerInputValid) {
-      //   didPlayerUpdateGrid = updateGrid(playerInput, PLAYERMARK);
-
-      //   console.log('You played at', playerInput);
-      // }
-
-      // console.log("player input is valid:", isPlayerInputValid);
-      // console.log('didPlayerUpdateGrid:', didPlayerUpdateGrid);
+      didPlayer1UpdateGrid = updateGrid(player1Input, player1Mark);
     }
 
     updateScreen();
-    console.log('\n', player1Name, 'played', PLAYER1MARK, 'at', player1Input);
-
-    // console.log('hasGameEnded', hasGameEnded());
-    // console.log('didComputerUpdateGrid', didComputerUpdateGrid);
-    // console.log('didPlayerUpdateGrid', didPlayerUpdateGrid);
+    console.log('\n' + player1Name, 'played', player1Mark, 'at', player1Input);
 
     if (hasGameEnded()) {
       break;
     }
 
-    for (let buffer = 0; buffer < 999999999; buffer++) {}
+    for (let buffer = 0; buffer < 899999999; buffer++) {}
 
-    while (((!isPlayer2InputValid || !didPlayer2UpdateGrid) && !hasGameEnded()) && counter++ < 40) {
-      // console.log('Computer input not valid');
-
+    while (((!isPlayer2InputValid || !didPlayer2UpdateGrid) && !hasGameEnded()) && areAnyBoxesLeft()) {
       if (ISCOMPUTERPLAYING) {
-        player2Input = takeComputerInput(PLAYER2MARK);
+        player2Input = takeComputerInput(player2Mark);
 
       } else {
-        player2Input = takePlayerInput(player2Name, PLAYER2MARK);
+        player2Input = takePlayerInput(player2Name, player2Mark);
       }
-
-      // console.log('player2Input', player2Input);
-      // console.log('counter', counter);
       
       isPlayer2InputValid = isInputValid(player2Input);
 
-      didPlayer2UpdateGrid = updateGrid(player2Input, PLAYER2MARK);
-
-      // if (isComputerInputValid) {
-      //   didComputerUpdateGrid = updateGrid(computerInput, COMPUTERMARK);
-
-      //   console.log('Computer played on', computerInput);
-      // }
-
-      // console.log("computer input is valid:", isComputerInputValid);
-      // console.log('didComputerUpdateGrid:', didComputerUpdateGrid);
+      didPlayer2UpdateGrid = updateGrid(player2Input, player2Mark);
     }
 
     updateScreen();
-    console.log('\n', player1Name, 'played', PLAYER1MARK, 'at', player1Input);
-    console.log('\n', player2Name, 'played', PLAYER2MARK, 'at', player2Input);
-
-
-    // console.log('hasGameEnded', hasGameEnded());
-    // console.log('didComputerUpdateGrid', didComputerUpdateGrid);
-    // console.log('didPlayerUpdateGrid', didPlayerUpdateGrid);
-    // // console.log(counter);
+    console.log('\n' + player1Name, 'played', player1Mark, 'at', player1Input);
+    console.log('\n' + player2Name, 'played', player2Mark, 'at', player2Input);
   }
-  
-  // let isMessagePrinted = false;
 
   if (didPlayer1UpdateGrid && hasGameEnded() && !didPlayer2UpdateGrid) {
     console.log('\n\nCONGRATS', player1Name, '!!🎉🎉 YOU WON!!!!!!🎉🎉🎉🎉🎉\n');
-    // isMessagePrinted = true;
+
+    player1Points++;
   }
 
   if (didPlayer2UpdateGrid && hasGameEnded()) {
@@ -342,21 +292,31 @@ function ticTacToe() {
     } else {
       console.log('\n\nCONGRATS', player2Name, '!!🎉🎉 YOU WON!!!!!!🎉🎉🎉🎉🎉\n');
     }
-    // isMessagePrinted = true;
+
+    player2Points++;
   }
 
-  if (!hasGameEnded()) {
+  if (!hasGameEnded() && !areAnyBoxesLeft()) {
     console.log('\n\nUh Oh! Looks like it is a draw. 😐😐😐\n');
   }
-
-  // console.log('\n\nGAME OVER');
-  
 }
 
 function startGame() {
+  let doesUserWantToContinue = true;
 
+  while(doesUserWantToContinue) {
+    resetGrid();
+
+    ticTacToe(MARK1, MARK2);
+
+    doesUserWantToContinue = confirm('\nNext Round ?');
+
+    MARK1 = MARK1 === CROSS ? CIRCLE : CROSS;
+    MARK2 = MARK2 === CROSS ? CIRCLE : CROSS;
+
+  }
 }
 
-ticTacToe();
+// ticTacToe(MARK1, MARK2);
 
-// console.log(takeComputerInput());
+startGame();
