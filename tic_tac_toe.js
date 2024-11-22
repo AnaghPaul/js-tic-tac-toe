@@ -6,6 +6,11 @@ const CIRCLE = '⭕';
 
 const ISCOMPUTERPLAYING = !willPlayer2Play();
 
+const MARK1 = CROSS;
+const MARK2 = CIRCLE;
+
+let firstPlayer = 1;
+
 let player1Points = 0;
 let player2Points = 0;
 
@@ -15,9 +20,6 @@ let player2Name = 'Computer';
 if (!ISCOMPUTERPLAYING) {
   player2Name = prompt('Enter name of player 2:', 'Player 2');
 }
-
-let MARK1 = doesPlayerWantCross() ? CROSS : CIRCLE;
-let MARK2 = MARK1 === CROSS ? CIRCLE : CROSS;
 
 let a1 = ' 1';
 let a2 = ' 2';
@@ -150,7 +152,6 @@ function updateGrid(input, mark) {
         c3 = mark;
         return true;
       }
-
     }
     
   console.log('\nYou cannot put', mark, 'at', input);
@@ -163,7 +164,15 @@ function takePlayerInput(name, mark) {
   return playerInput;
 }
 
-function takeComputerInput() {
+function takePlayer2Input(name, mark) {
+  if (ISCOMPUTERPLAYING) {
+    return computerInput();
+  }
+
+  return takePlayerInput(name, mark);
+}
+
+function computerInput() {
   const randomBoxNumber = Math.ceil(Math.random() * 9);
 
   return randomBoxNumber + '';
@@ -226,66 +235,58 @@ function isInputValid(input) {
   return false;
 }
 
-function ticTacToe(player1Mark, player2Mark) {
-  updateScreen();
+function takeInput(currentPlayer, playerMark) {
+  const playerName = currentPlayer === firstPlayer ? player1Name : player2Name;
 
-  // let counter = 0;
+  let didPlayerUpdateGrid = false;
 
-  let didPlayer1UpdateGrid = false;
-  let didPlayer2UpdateGrid = false;
+  let playerInput = '';
 
-  while (!hasGameEnded() && areAnyBoxesLeft()) {
-    let isPlayer1InputValid = false;
-    let isPlayer2InputValid = false;
-
-    didPlayer1UpdateGrid = false;
-    didPlayer2UpdateGrid = false;
-
-    let player1Input = '';
-    let player2Input = '';
-    
-    while (((!isPlayer1InputValid || !didPlayer1UpdateGrid) && !hasGameEnded()) && areAnyBoxesLeft()) {
-      player1Input = takePlayerInput(player1Name, player1Mark);
-
-      isPlayer1InputValid = isInputValid(player1Input);
-
-      didPlayer1UpdateGrid = updateGrid(player1Input, player1Mark);
+  while (!didPlayerUpdateGrid && !hasGameEnded() && areAnyBoxesLeft()) {
+    if (currentPlayer === firstPlayer) {
+      playerInput = takePlayerInput(player1Name, playerMark);
     }
 
-    updateScreen();
-    console.log('\n' + player1Name, 'played', player1Mark, 'at', player1Input);
-
-    if (hasGameEnded()) {
-      break;
+    if (currentPlayer !== firstPlayer) {
+      playerInput = takePlayer2Input(player2Name, playerMark);
     }
 
-    for (let buffer = 0; buffer < 899999999; buffer++) {}
-
-    while (((!isPlayer2InputValid || !didPlayer2UpdateGrid) && !hasGameEnded()) && areAnyBoxesLeft()) {
-      if (ISCOMPUTERPLAYING) {
-        player2Input = takeComputerInput(player2Mark);
-
-      } else {
-        player2Input = takePlayerInput(player2Name, player2Mark);
-      }
-      
-      isPlayer2InputValid = isInputValid(player2Input);
-
-      didPlayer2UpdateGrid = updateGrid(player2Input, player2Mark);
+    if (isInputValid(playerInput)) {
+      didPlayerUpdateGrid = updateGrid(playerInput, playerMark);
     }
-
-    updateScreen();
-    console.log('\n' + player1Name, 'played', player1Mark, 'at', player1Input);
-    console.log('\n' + player2Name, 'played', player2Mark, 'at', player2Input);
   }
 
-  if (didPlayer1UpdateGrid && hasGameEnded() && !didPlayer2UpdateGrid) {
+  updateScreen();
+  console.log('\n' + playerName, 'played', playerMark, 'at', playerInput);
+
+  for (let buffer = 0; buffer < 899999999; buffer++) {}
+}
+
+function ticTacToe(player1Mark, player2Mark) {
+  let currentPlayer = 0;
+  
+  updateScreen();
+
+  while (!hasGameEnded() && areAnyBoxesLeft()) {
+
+    currentPlayer = (currentPlayer % 2) + 1;
+
+    if (currentPlayer === 1) {
+      takeInput(currentPlayer, player1Mark);
+    }
+
+    if (currentPlayer === 2) {
+      takeInput(currentPlayer, player2Mark);
+    }
+  }
+
+  if (currentPlayer === firstPlayer && hasGameEnded()) {
     console.log('\n\nCONGRATS', player1Name, '!!🎉🎉 YOU WON!!!!!!🎉🎉🎉🎉🎉\n');
 
     player1Points++;
   }
 
-  if (didPlayer2UpdateGrid && hasGameEnded()) {
+  if (currentPlayer !== firstPlayer && hasGameEnded()) {
     if (ISCOMPUTERPLAYING) {
       console.log('\n\nOOPSS!! Computer won 😔😔😔\n');
 
@@ -311,9 +312,7 @@ function startGame() {
 
     doesUserWantToContinue = confirm('\nNext Round ?');
 
-    MARK1 = MARK1 === CROSS ? CIRCLE : CROSS;
-    MARK2 = MARK2 === CROSS ? CIRCLE : CROSS;
-
+    firstPlayer = (firstPlayer % 2) + 1;
   }
 }
 
