@@ -74,6 +74,26 @@ function printPointBoard() {
   console.log('\n\n');
 }
 
+function printConclusion() {
+  let winner = '';
+  
+  if (player1Points === player2Points) {
+    return 'Both players scored same. It was a draw.'
+  }
+  
+  if (player1Points > player2Points) {
+    winner = player1Name;
+  }
+  
+  if (player2Points > player1Points) {
+    winner = player2Name;
+  }
+  
+  const pointDifference = Math.abs(player1Points, player2Points);
+
+  return '\n' + winner + ' won by ' + pointDifference + ' points.';
+}
+
 function updateScreen() {
   console.clear();    // ------comment this to see log-----------
 
@@ -314,6 +334,8 @@ function startGame() {
 
     firstPlayer = (firstPlayer % 2) + 1;
   }
+
+  console.log(printConclusion());
 }
 
 // ticTacToe(MARK1, MARK2);
